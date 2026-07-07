@@ -1,0 +1,51 @@
+{
+  "numeric_features": [
+    "tenure_months",
+    "monthly_charges",
+    "total_charges",
+    "num_support_calls"
+  ],
+  "categorical_features": {
+    "contract_type": [
+      "Month-to-month",
+      "One year",
+      "Two year"
+    ],
+    "internet_service": [
+      "DSL",
+      "Fiber optic",
+      "No"
+    ],
+    "payment_method": [
+      "Bank transfer",
+      "Credit card",
+      "Electronic check",
+      "Mailed check"
+    ],
+    "partner": [
+      "No",
+      "Yes"
+    ],
+    "dependents": [
+      "No",
+      "Yes"
+    ],
+    "tech_support": [
+      "No",
+      "No internet",
+      "Yes"
+    ],
+    "online_security": [
+      "No",
+      "No internet",
+      "Yes"
+    ],
+    "paperless_billing": [
+      "No",
+      "Yes"
+    ]
+  },
+  "binary_features": [
+    "senior_citizen"
+  ]
+}

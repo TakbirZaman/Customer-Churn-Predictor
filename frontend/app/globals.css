@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0a0e14;
+  --surface: #10161f;
+  --surface-2: #171f2b;
+  --border: #232d3a;
+  --text: #e8edf4;
+  --text-muted: #8593a6;
+  --text-faint: #56637a;
+
+  --safe: #2dd4bf;
+  --safe-dim: #16302c;
+  --warn: #f5a623;
+  --warn-dim: #332512;
+  --risk: #f0475a;
+  --risk-dim: #331419;
+  --brand: #4c8dff;
+  --brand-dim: #10203f;
+
+  --font-display: "Space Grotesk";
+  --font-body: "Inter";
+  --font-data: "JetBrains Mono";
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(76, 141, 255, 0.10), transparent),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-data {
+  font-family: var(--font-data), ui-monospace, monospace;
+}
+
+::selection {
+  background: var(--brand);
+  color: white;
+}
+
+/* thin scrollbar for the results table */
+.thin-scroll::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: var(--surface-2);
+  border-radius: 4px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes sweep {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.radar-sweep {
+  animation: sweep 4s linear infinite;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radar-sweep {
+    animation: none;
+  }
+}

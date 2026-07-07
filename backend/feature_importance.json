@@ -1,0 +1,50 @@
+[
+  {
+    "feature": "tenure_months",
+    "importance": 0.2577
+  },
+  {
+    "feature": "monthly_charges",
+    "importance": 0.1977
+  },
+  {
+    "feature": "total_charges",
+    "importance": 0.1536
+  },
+  {
+    "feature": "num_support_calls",
+    "importance": 0.0795
+  },
+  {
+    "feature": "contract_type_Month-to-month",
+    "importance": 0.0374
+  },
+  {
+    "feature": "payment_method_Electronic check",
+    "importance": 0.022
+  },
+  {
+    "feature": "internet_service_Fiber optic",
+    "importance": 0.0179
+  },
+  {
+    "feature": "online_security_No",
+    "importance": 0.0172
+  },
+  {
+    "feature": "tech_support_No",
+    "importance": 0.0159
+  },
+  {
+    "feature": "contract_type_Two year",
+    "importance": 0.0157
+  },
+  {
+    "feature": "partner_No",
+    "importance": 0.0144
+  },
+  {
+    "feature": "partner_Yes",
+    "importance": 0.0141
+  }
+]

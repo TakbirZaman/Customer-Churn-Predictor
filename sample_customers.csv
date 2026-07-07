@@ -1,0 +1,20 @@
+customer_id,tenure_months,monthly_charges,total_charges,contract_type,internet_service,payment_method,senior_citizen,partner,dependents,tech_support,online_security,paperless_billing,num_support_calls
+CUST-10000,16,40.89,639.92,Month-to-month,Fiber optic,Mailed check,0,No,Yes,No,No internet,Yes,1
+CUST-10001,32,82.58,2712.16,Two year,DSL,Electronic check,0,No,No,No internet,No,Yes,1
+CUST-10002,19,104.19,2156.73,One year,No,Electronic check,0,No,No,No internet,No,No,0
+CUST-10003,2,28.19,52.66,One year,Fiber optic,Bank transfer,1,No,No,No,No internet,Yes,2
+CUST-10004,4,116.37,430.14,Month-to-month,No,Mailed check,0,Yes,No,Yes,No,No,0
+CUST-10005,5,61.14,277.17,Month-to-month,Fiber optic,Credit card,0,No,Yes,No,No,No,1
+CUST-10006,7,35.75,243.43,Month-to-month,DSL,Electronic check,0,Yes,Yes,No internet,Yes,No,3
+CUST-10007,20,87.73,1697.62,Two year,No,Bank transfer,0,Yes,No,No internet,No,Yes,1
+CUST-10008,16,51.61,814.33,One year,Fiber optic,Bank transfer,1,No,Yes,No,No,Yes,1
+CUST-10009,5,62.55,312.96,One year,Fiber optic,Bank transfer,0,Yes,No,No,No internet,Yes,2
+CUST-10010,1,52.87,55.6,Month-to-month,Fiber optic,Credit card,0,No,Yes,No,Yes,No,2
+CUST-10011,4,40.5,158.5,Two year,DSL,Bank transfer,0,Yes,Yes,No internet,Yes,No,2
+CUST-10012,72,86.72,6032.32,Two year,DSL,Credit card,0,Yes,Yes,No,Yes,Yes,3
+CUST-10013,15,56.41,901.47,Month-to-month,DSL,Electronic check,1,No,Yes,Yes,No,Yes,2
+CUST-10014,48,21.9,1124.74,Month-to-month,Fiber optic,Mailed check,1,Yes,No,No,Yes,Yes,3
+CUST-10015,45,81.53,3472.76,Month-to-month,Fiber optic,Electronic check,0,No,No,No internet,No internet,No,1
+CUST-10016,17,28.83,471.94,Month-to-month,Fiber optic,Electronic check,0,Yes,Yes,No,No internet,Yes,0
+CUST-10017,29,30.4,938.92,Month-to-month,Fiber optic,Electronic check,0,Yes,Yes,No,No,No,1
+CUST-10018,5,100.78,461.51,Month-to-month,DSL,Electronic check,0,Yes,No,No,Yes,Yes,2
