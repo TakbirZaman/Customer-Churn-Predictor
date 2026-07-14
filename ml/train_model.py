@@ -20,7 +20,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-df = pd.read_csv("/home/claude/churn-predictor/ml/customer_churn.csv")
+from pathlib import Path
+BASE = Path(__file__).resolve().parent.parent
+df = pd.read_csv(BASE / "ml" / "customer_churn.csv")
 
 TARGET = "churn"
 DROP_COLS = ["customer_id"]
@@ -85,13 +87,14 @@ schema = {
     "binary_features": binary_passthrough,
 }
 
-joblib.dump(model, "/home/claude/churn-predictor/backend/churn_model.pkl")
-joblib.dump(preprocessor, "/home/claude/churn-predictor/backend/preprocessor.pkl")
-with open("/home/claude/churn-predictor/backend/metrics.json", "w") as f:
+backend = BASE / "backend"
+joblib.dump(model, backend / "churn_model.pkl")
+joblib.dump(preprocessor, backend / "preprocessor.pkl")
+with open(backend / "metrics.json", "w") as f:
     json.dump(metrics, f, indent=2)
-with open("/home/claude/churn-predictor/backend/feature_importance.json", "w") as f:
+with open(backend / "feature_importance.json", "w") as f:
     json.dump(feat_imp, f, indent=2)
-with open("/home/claude/churn-predictor/backend/schema.json", "w") as f:
+with open(backend / "schema.json", "w") as f:
     json.dump(schema, f, indent=2)
 
 print("\nSaved model artifacts to backend/")
