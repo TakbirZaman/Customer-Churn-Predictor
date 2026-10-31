@@ -1,0 +1,15 @@
+{
+  "tenure_months": 17.0,
+  "monthly_charges": 65.17500000000001,
+  "total_charges": 936.765,
+  "contract_type": "Month-to-month",
+  "internet_service": "Fiber optic",
+  "payment_method": "Electronic check",
+  "senior_citizen": 0,
+  "partner": "No",
+  "dependents": "No",
+  "tech_support": "No",
+  "online_security": "No",
+  "paperless_billing": "Yes",
+  "num_support_calls": 1.0
+}

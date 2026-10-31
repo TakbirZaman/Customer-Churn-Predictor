@@ -18,17 +18,18 @@ from typing import Literal, Optional
 
 import joblib
 import pandas as pd
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile, Query
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
+from retention import validate_frame, explain, analyze, model_id, MAX_ROWS, MAX_BYTES, NOTE
 
 BASE_DIR = Path(__file__).parent
 
-app = FastAPI(title="Churn Prediction API", version="1.0.0")
+app = FastAPI(title="Churn Prediction API", version="1.1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten to your frontend's domain in production
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],  # tighten to your frontend's domain in production
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -46,7 +47,12 @@ FEATURE_COLUMNS = (
 )
 
 
+reference = json.loads((BASE_DIR / "explanation_reference.json").read_text())
+MODEL_VERSION = model_id(BASE_DIR)
+
+
 class Customer(BaseModel):
+    model_config = ConfigDict(allow_inf_nan=False)
     tenure_months: int = Field(..., ge=0, le=100)
     monthly_charges: float = Field(..., ge=0)
     total_charges: float = Field(..., ge=0)
@@ -63,9 +69,7 @@ class Customer(BaseModel):
 
 
 def score_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-    missing = [c for c in FEATURE_COLUMNS if c not in df.columns]
-    if missing:
-        raise HTTPException(status_code=400, detail=f"Missing required columns: {missing}")
+    validate_frame(df, Customer, FEATURE_COLUMNS)
     X = df[FEATURE_COLUMNS]
     X_t = preprocessor.transform(X)
     proba = model.predict_proba(X_t)[:, 1]
@@ -84,7 +88,7 @@ def health():
 
 @app.get("/metadata")
 def metadata():
-    return {"metrics": metrics, "feature_importance": feature_importance, "schema": schema}
+    return {"metrics": metrics, "feature_importance": feature_importance, "schema": schema, "model_version": MODEL_VERSION, "limitations": NOTE}
 
 
 @app.post("/predict")
@@ -95,24 +99,47 @@ def predict(customer: Customer):
         "churn_probability": float(result["churn_probability"]),
         "risk_level": str(result["risk_level"]),
         "prediction": "Churn" if result["churn_probability"] >= 0.5 else "Stay",
+        "explanation": explain(df, model, preprocessor, FEATURE_COLUMNS, reference)[0],
+        "explanation_method": "One feature replaced at a time by training median/mode; not causal.",
+        "limitations": NOTE,
     }
 
 
-@app.post("/predict-batch")
-async def predict_batch(file: UploadFile = File(...)):
-    if not file.filename.endswith(".csv"):
-        raise HTTPException(status_code=400, detail="Please upload a .csv file")
-    raw = await file.read()
+async def read_csv(file):
+    if not (file.filename or '').lower().endswith('.csv'):
+        raise HTTPException(400, 'Please upload a .csv file.')
+    raw = await file.read(MAX_BYTES + 1)
+    if len(raw) > MAX_BYTES:
+        raise HTTPException(413, 'CSV exceeds 5 MB.')
     try:
-        df = pd.read_csv(io.BytesIO(raw))
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Could not parse CSV: {e}")
+        import csv
+        text = raw.decode('utf-8-sig')
+        headers = next(csv.reader(io.StringIO(text)))
+        if len(headers) != len(set(headers)):
+            raise HTTPException(400, 'Duplicate CSV headers are not supported.')
+        return pd.read_csv(io.StringIO(text), nrows=MAX_ROWS + 1, dtype={'customer_id': str})
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(400, 'Could not parse CSV. Use UTF-8 with a header row.')
 
-    result = score_dataframe(df)
+
+@app.post('/predict-batch')
+async def predict_batch(file: UploadFile = File(...)):
+    result = score_dataframe(await read_csv(file))
     summary = {
-        "total_customers": len(result),
-        "predicted_churn_count": int((result["churn_probability"] >= 0.5).sum()),
-        "avg_churn_probability": round(float(result["churn_probability"].mean()), 4),
-        "high_risk_count": int((result["risk_level"] == "High").sum()),
+        'total_customers': len(result),
+        'predicted_churn_count': int((result.churn_probability >= .5).sum()),
+        'avg_churn_probability': round(float(result.churn_probability.mean()), 4),
+        'high_risk_count': int((result.risk_level == 'High').sum()),
     }
-    return {"summary": summary, "rows": result.to_dict(orient="records")}
+    return {'summary': summary, 'rows': json.loads(result.to_json(orient='records'))}
+
+
+@app.post('/retention-analysis')
+async def retention_analysis(file: UploadFile = File(...),
+                             currency: str = Query('unspecified', pattern=r'^(unspecified|[A-Z]{3})$'),
+                             explain_top: int = Query(20, ge=0, le=50)):
+    scored = score_dataframe(await read_csv(file))
+    return analyze(scored, lambda frame: explain(frame, model, preprocessor, FEATURE_COLUMNS, reference),
+                   MODEL_VERSION, currency, explain_top)

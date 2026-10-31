@@ -98,3 +98,8 @@ with open(backend / "schema.json", "w") as f:
     json.dump(schema, f, indent=2)
 
 print("\nSaved model artifacts to backend/")
+
+# Explain against training rows only, never the held-out test split.
+reference = {c: (float(X_train[c].median()) if c in numeric_features else X_train[c].mode().iloc[0]) for c in X_train.columns}
+reference = {k: v.item() if hasattr(v, 'item') else v for k, v in reference.items()}
+(backend / 'explanation_reference.json').write_text(json.dumps(reference, indent=2))

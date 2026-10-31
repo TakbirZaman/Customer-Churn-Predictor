@@ -27,8 +27,8 @@ const DEFAULTS: CustomerInput = {
 
 const LABELS: Record<string, string> = {
   tenure_months: "Tenure (months)",
-  monthly_charges: "Monthly charges ($)",
-  total_charges: "Total charges ($)",
+  monthly_charges: "Monthly charges (source currency)",
+  total_charges: "Total charges (source currency)",
   num_support_calls: "Support calls (last 90d)",
   contract_type: "Contract type",
   internet_service: "Internet service",
@@ -75,6 +75,8 @@ export default function PredictionForm({ schema, onSubmit, loading }: Props) {
             value={form[key as keyof CustomerInput] as number}
             onChange={(e) => update(key as keyof CustomerInput, Number(e.target.value) as never)}
             min={0}
+            step={key.includes("charges") ? "0.01" : "1"}
+            max={key === "tenure_months" ? 100 : key === "num_support_calls" ? 20 : undefined}
             required
           />
         </Field>

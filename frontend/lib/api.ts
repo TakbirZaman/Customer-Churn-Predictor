@@ -46,6 +46,8 @@ export type PredictionResult = {
   churn_probability: number;
   risk_level: "Low" | "Medium" | "High";
   prediction: "Churn" | "Stay";
+  explanation?: { top_factors: { feature: string; value: string | number; reference_value: string | number; probability_difference: number }[] };
+  explanation_method?: string;
 };
 
 export type BatchResult = {
@@ -62,7 +64,7 @@ async function req<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, options);
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.detail || `Request failed: ${res.status}`);
+    throw new Error(typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail || `Request failed: ${res.status}`));
   }
   return res.json();
 }

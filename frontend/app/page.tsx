@@ -11,6 +11,7 @@ import BatchUpload from "@/components/BatchUpload";
 export default function Home() {
   const [meta, setMeta] = useState<Metadata | null>(null);
   const [result, setResult] = useState<PredictionResult | null>(null);
+  const [predictionError, setPredictionError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [metaError, setMetaError] = useState<string | null>(null);
 
@@ -23,11 +24,13 @@ export default function Home() {
 
   const handlePredict = async (customer: CustomerInput) => {
     setLoading(true);
+    setResult(null);
+    setPredictionError(null);
     try {
       const res = await api.predict(customer);
       setResult(res);
-    } catch {
-      // surfaced via absence of result; keep UI calm
+    } catch (e) {
+      setPredictionError(e instanceof Error ? e.message : "Prediction failed");
     } finally {
       setLoading(false);
     }
@@ -65,6 +68,10 @@ export default function Home() {
         </div>
       )}
 
+      <p className="mb-6 text-sm text-[var(--text-muted)]">
+        Business analysis: <a className="underline" href={process.env.NEXT_PUBLIC_ANALYST_URL || "http://localhost:8501"}>Open Analyst Studio</a> for retention reports, segments and priority lists. Start the retention suite first.
+      </p>
+      {predictionError && <p role="alert" className="mb-4 text-red-500">{predictionError}</p>}
       {/* single prediction */}
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-5">
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 lg:col-span-3">
@@ -95,6 +102,17 @@ export default function Home() {
         </div>
       </section>
 
+      {result?.explanation && (
+        <section className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+          <h2 className="font-semibold">Individual model sensitivity</h2>
+          <p className="my-2 text-xs text-[var(--text-muted)]">Each feature is replaced by its training median or mode. Positive differences mean the current value scores higher than that reference. These are not causal reasons or promised savings, and they do not add up to the prediction.</p>
+          <ul className="space-y-2 text-sm">
+            {result.explanation.top_factors.map((factor) => (
+              <li key={factor.feature}>{factor.feature.replaceAll("_", " ")}: {String(factor.value)} versus reference {String(factor.reference_value)} — {(factor.probability_difference * 100).toFixed(2)} percentage points</li>
+            ))}
+          </ul>
+        </section>
+      )}
       {/* feature importance */}
       {meta && (
         <section className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
