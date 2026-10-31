@@ -11,6 +11,8 @@ Predict customer churn, compare business segments, and produce retention reports
 5. Upload `sample_customers.csv`, keep currency **unspecified** for the synthetic sample, and click **Run retention analysis**.
 6. Download the report, prioritized customer CSV, segment CSV, risk chart and individual explanations.
 
+For an automatic setup check, run `start-retention-windows.bat --check-startup` from Command Prompt. It starts both services, generates a sample report in a temporary folder, and exits.
+
 Keep the terminal open while using the application. Press Ctrl+C to stop both services. The batch launcher checks for Python 3.11, then 3.12. It does not require Node.js, Docker or an AI API key for retention analysis.
 
 **The bundled model uses synthetic telecom data.** It demonstrates the workflow, not real-world business accuracy. Validate or retrain it using appropriate real data and a defined prediction horizon before making operational decisions.

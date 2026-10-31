@@ -2,7 +2,10 @@ name: Retention integration checks
 on: [push, pull_request]
 jobs:
   python:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -10,6 +13,13 @@ jobs:
           python-version: '3.11'
       - run: pip install -r requirements-retention.txt pytest httpx
       - run: python -m pytest -q
+      - name: Verify Windows batch launcher and sample report
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: start-retention-windows.bat --check-startup
+      - name: Verify Linux startup and sample report
+        if: runner.os == 'Linux'
+        run: python run_retention.py --check-startup
   dashboard:
     runs-on: ubuntu-latest
     defaults:
