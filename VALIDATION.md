@@ -2,6 +2,10 @@
 
 ## Executed
 
+GitHub Actions also verified Windows and Linux with Python 3.11: [successful cross-platform run](https://github.com/TakbirZaman/Customer-Churn-Predictor/actions/runs/41182733479). Both platforms passed the tests and live startup/sample-report checks; the dashboard build passed.
+
+The Windows run invoked `start-retention-windows.bat --check-startup` in a fresh environment. It caught and led to a fix for Streamlit's first-run email prompt; the launcher now starts Streamlit headlessly and waits for both services to be ready. It also checks both ports before starting.
+
 - Python 3.12, scikit-learn 1.8.0: **36 tests passed** across backend, connector, agent, persistence and Streamlit.
 - Real committed model used by backend tests, including independent checks of individual feature replacement score differences.
 - Invalid categories, negative/non-finite charges, fractional integer fields, missing columns, duplicate IDs/headers, empty and oversized uploads rejected.
@@ -14,7 +18,7 @@
 
 ## Limits
 
-- Windows batch file prepared for Python 3.11/3.12; this Linux environment cannot execute the Windows launcher. Its Python process supervisor was exercised live.
+- The batch launcher was verified on the GitHub-hosted Windows runner with Python 3.11. A physical Windows 10 desktop and Python 3.12 on Windows were not separately tested.
 - No real provider credentials were used. Free-form cloud/Ollama responses require configuration; provider behavior was tested with mocked responses.
 - No real customer dataset or retention intervention was evaluated. Synthetic model performance does not establish business performance.
 - Harmless upstream Starlette/AnyIO and joblib/NumPy deprecation warnings occur in this runtime.
