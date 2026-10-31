@@ -34,7 +34,7 @@ def main():
             except OSError: time.sleep(.5)
         else: raise RuntimeError('Churn API startup timed out.')
         env = dict(os.environ, CHURN_API_URL='http://127.0.0.1:8000')
-        ui = subprocess.Popen([sys.executable, '-m', 'streamlit', 'run', 'app.py', '--server.address', '127.0.0.1', '--server.port', '8501'], cwd=ROOT/'analyst-studio', env=env)
+        ui = subprocess.Popen([sys.executable, '-m', 'streamlit', 'run', 'app.py', '--server.address', '127.0.0.1', '--server.port', '8501', '--server.headless', 'true'], cwd=ROOT/'analyst-studio', env=env)
         children.append(ui)
         for _ in range(120):
             if ui.poll() is not None or api.poll() is not None:
